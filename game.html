@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link href="base.css" type="text/css" rel="stylesheet" />
+  <title>Playground</title>
+  </head>
+
+  <body>
+    <div id="container">
+	   <canvas id="game"></canvas>
+    </div>
+    <!-- TODO: fix loading order / initialisation -->
+    <script src="game.js"></script>
+    <script src="key.js"></script>
+    <script src="screen.js"></script>
+    <script src="polygon.js"></script>
+    <script src="main.js"></script>
+    <script>
+      window.onload = function() {
+          game.main.init();
+      };
+    </script>
+  </body>
+</html>
