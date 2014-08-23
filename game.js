@@ -35,7 +35,7 @@ game.constants = {
     screenHeight: 600,
     // frames per second for the logic (and the rendering if
     // RequestAnimationFrame is not supported)
-    fps: 40,
+    fps: 60,
 };
 
 game.namespace('key');
@@ -116,12 +116,15 @@ game.scene.BaseScene = function () {
     };
 
     this.draw = function () {
+        return;
     };
 
     this.processInput = function () {
+        return;
     };
-}
+};
 
+game.dt = 0;
 game.main = (function () {
     var then = Date.now(),
         currentScene = new game.scene.BaseScene();
@@ -130,7 +133,7 @@ game.main = (function () {
     function start(startScene) {
         var mainDraw;
 
-        currentScene = startScene || currentScene,
+        currentScene = startScene || currentScene;
 
         // requestAnimationFrame
         window.requestAnimFrame = window.requestAnimationFrame || window.msRequestAnimationFrame ||
@@ -146,11 +149,12 @@ game.main = (function () {
 
         // logic only (and draw if requestAnimationFrame not supported)
         function main() {
-            var now = Date.now(),
-                // time elapsed since last tick in s
-                dt = (now - then) / 1000;
+            var now = Date.now();
+
+            // time elapsed since last tick in s
+            game.dt += Math.min(1, (now - then) / 1000);
             currentScene.processInput();
-            currentScene.update(dt);
+            currentScene.update(game.dt);
             mainDraw();
             // possible scene change
             currentScene = currentScene.next;
