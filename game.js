@@ -106,6 +106,97 @@ game.key.allkeys = (function () {
     window.addEventListener("keyup", inputListener, false);
 }());
 
+// sounds!
+game.namespace('juke');
+
+game.juke.constants = {musicVol: 0.4,
+                       sfxVol: 0.8,
+                      };
+
+game.juke.Juke = function () {
+    /*global Audio*/
+    var test = new Audio(),
+        ext,
+        playingMusic = false,
+        playingName = "",
+        muted = false;
+
+    this.music = {};
+    this.sfx = {};
+
+    // it doesn't seem that this type of thing is bulletproof, but
+    // there doesn't seem to be a better alternative.
+    if (test.canPlayType("audio/ogg") !== "") {
+        ext = "ogg";
+    } else if (test.canPlayType("audio/mp3") !== "") {
+        ext = "mp3";
+    }
+
+    function loadAudio(nameMap, store, loop, volume) {
+        var k, m;
+        for (k in nameMap) {
+            if (nameMap.hasOwnProperty(k)) {
+                m = new Audio(nameMap[k] + "." + ext);
+                m.loop = loop;
+                m.volume = volume;
+                m.load();
+                store[k] = m;
+            }
+        }
+    }
+
+    this.loadMusic = function (musicMap) {
+        loadAudio(musicMap, this.music, true, game.juke.constants.musicVol);
+    };
+
+    this.loadSfx = function (sfxMap) {
+        loadAudio(sfxMap, this.sfx, false, game.juke.constants.sfxVol);
+    };
+
+    this.playMusic = function (name) {
+        if (!muted && !playingMusic) {
+            this.music[name].play();
+            playingMusic = true;
+            playingName = name;
+        }
+    };
+
+    this.stopMusic = function () {
+        if (playingMusic) {
+            this.music[playingName].pause();
+            playingMusic = false;
+            // just in case
+            playingName = "";
+        }
+    };
+
+    this.playSfx = function (name) {
+        if (!muted) {
+            this.sfx[name].play();
+        }
+    };
+
+    this.stopSfx = function (name) {
+        this.sfx[name].pause();
+        this.sfx[name].currentTime = 0;
+    };
+
+    this.mute = function () {
+        muted = true;
+        this.stopMusic();
+    };
+
+    this.unmute = function () {
+        muted = false;
+        this.playMusic('main');
+    };
+};
+
+// here's how to create jukebox object for in game audio
+//juke.jukebox = new game.juke.Juke();
+//juke.jukebox.loadMusic({mapping of names to paths to ogg/mp3 files});
+//juke.jukebox.loadSfx({mapping of names to paths to ogg/mp3 files});
+
 // game scenes used in main loop
 game.namespace('scene');
 game.scene.BaseScene = function () {

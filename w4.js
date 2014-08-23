@@ -67,6 +67,7 @@ w4.mainScene = function () {
         }
 
         if (worldIn !== prevWorldIn) {
+            w4.jukebox.playSfx('switch');
             // compute relative
             if ((prevWorldIn === 0 || prevWorldIn === 3) && (worldIn == 1 || worldIn == 2)) {
                 // moving 1 to the right

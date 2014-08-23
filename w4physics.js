@@ -51,6 +51,7 @@ physics.normalWorldStepY = function (entity, world, dt) {
     if (entity.jump && (!entity.jumping) && entity.onfloor) {
         entity.ddy = world.impulse;
         entity.dy = 0;
+        w4.jukebox.playSfx('jump');
         entity.jumping = true;
         entity.onfloor = false;
     }
@@ -221,6 +222,7 @@ physics.crazyWorldStepX = function (entity, world, dt) {
     if (entity.jump && (!entity.jumping) && entity.onfloor) {
         entity.ddx = world.impulse;
         entity.dx = 0;
+        w4.jukebox.playSfx('jump');        
         entity.jumping = true;
         entity.onfloor = false;
     }
