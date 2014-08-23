@@ -7,18 +7,16 @@
   </head>
 
   <body>
-    <div id="container">
-	   <canvas id="game"></canvas>
+    <div id="centerer">
+      <div id="container">
+	     <canvas id="w4"></canvas>
+      </div>
     </div>
-    <!-- TODO: fix loading order / initialisation -->
     <script src="game.js"></script>
-    <script src="key.js"></script>
-    <script src="screen.js"></script>
-    <script src="polygon.js"></script>
-    <script src="main.js"></script>
+    <script src="w4.js"></script>
     <script>
       window.onload = function() {
-          game.main.init();
+          game.main.start(new w4.mainScene());
       };
     </script>
   </body>
