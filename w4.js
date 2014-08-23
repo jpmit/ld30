@@ -19,12 +19,11 @@ w4.constants = {
     bgColors: ["#F2F1E5", "#DDDBB6", "#CCC97F", "#ECE89E"],
     gravityDir: ["down", "right", "left", "up"],
     arrowImages: ["arrowdown.png", "arrowright.png", "arrowleft.png", "arrowup.png"],
-
-    /* physics constants */
+    /* physics constants (for the normal axes) */
     gravity: 1000,
-    maxdx: 200,
-    maxdy: 500,
-    accel: 5000,
+    maxdx: 150,
+    maxdy: 400,
+    accel: 4000,
     friction: 500,
     impulse: 24000
 };
@@ -85,6 +84,7 @@ w4.mainScene = function () {
             }
             
             player.worldIn = worldIn;
+            player.setAngle(worlds[worldIn]);
 //            console.log(player.hitbox.x, player.hitbox.y);
             player.hitbox.x = player.hitbox.x + xshift2;
             player.hitbox.y = player.hitbox.y + yshift2;
@@ -143,7 +143,7 @@ w4.mainScene = function () {
             i;
 
         /* player should eventually be loaded from json data */
-        w4.player.player = new w4.sprite.PhysicsSprite(30, 30, 50, 50);
+        w4.player.player = new w4.sprite.PhysicsSprite(20, 20, 50, 50);
 
         for (i = 0; i < nWorlds; i += 1) {
             worlds[i].loadLevel(celldata);

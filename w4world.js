@@ -35,11 +35,11 @@ world.World = function (x0, y0, w, h, num) {
     } else if (this.num === 1) {
         this.gravity = w4.constants.gravity;
         this.impulse = -w4.constants.impulse;
-        this.gravityDir = world.constants.ydir;
+        this.gravityDir = world.constants.xdir;
     } else if (this.num === 2) {
         this.gravity = -w4.constants.gravity;
         this.impulse = w4.constants.impulse;
-        this.gravityDir = world.constants.ydir;
+        this.gravityDir = world.constants.xdir;
     } else if (this.num === 3) {
         this.gravity = -w4.constants.gravity;
         this.impulse = w4.constants.impulse;
