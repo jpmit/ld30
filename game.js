@@ -7,10 +7,10 @@
 
 var game = {};
 
-// from the book 'Javascript Design Patterns' by Stefanov
-game.namespace = function (ns_string) {
+// adapted from the book 'Javascript Design Patterns' by Stefanov
+game.namespace = function (ns_string, par) {
     var parts = ns_string.split('.'),
-        parent = game,
+        parent = par || game,
         i;
 
     // strip redundant leading global
