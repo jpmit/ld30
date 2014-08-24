@@ -1,10 +1,21 @@
+'use strict';
+/*global game*/
+
 var w4 = w4 || {};
 
 var level = game.namespace('level', w4);
 
+level.loadLevel = function (num) {
+    var ldata =  w4.leveldata[num.toString()];
+
+    w4.level.currentLevel = new w4.level.Level(ldata);
+
+    // player should eventually be loaded from json data
+    w4.player.player = new w4.sprite.PhysicsSprite(20, 20, 50, 50);
+};
+
 level.Level = function (ldata) {
-    var tSize = w4.constants.tileSize,
-        nTilesX = w4.constants.totalTileWidth,
+    var nTilesX = w4.constants.totalTileWidth,
         nTilesY = w4.constants.totalTileHeight;
 
     this.cellData = ldata.layers[0].data;
@@ -26,9 +37,10 @@ level.Level = function (ldata) {
         return globalPos;
     };
 
-    this.getTileValue = function(tX, tY) {
+    this.getTileValue = function (tX, tY) {
         return this.cellData[tX + tY * nTilesX];
     };
 };
 
+// currentLevel is accessed by other stuff
 level.currentLevel = null;

@@ -1,6 +1,6 @@
-/*global game*/
-
 'use strict';
+/*global game*/
+/*global Image*/
 
 var w4 = w4 || {};
 
@@ -17,16 +17,16 @@ sprite.Sprite = function () {
         ctx.save();
         if (this.img) {
             if (this.angle) {
-            ctx.translate(this.rect.x + this.hwidth, this.rect.y + this.hheight);
-            ctx.rotate(this.angle);
-            ctx.drawImage(this.img, -this.hwidth, -this.hheight);
+                ctx.translate(this.rect.x + this.hwidth, this.rect.y + this.hheight);
+                ctx.rotate(this.angle);
+                ctx.drawImage(this.img, -this.hwidth, -this.hheight);
             } else {
                 ctx.drawImage(this.img, this.rect.x, this.rect.y);
             }
         } else {
             ctx.fillRect(this.rect.x, this.rect.y, this.rect.width, this.rect.height);
         }
-            ctx.restore();
+        ctx.restore();
     };
 };
 
@@ -79,7 +79,7 @@ sprite.PhysicsSprite = function (width, height, x, y) {
                 this.angle = 0;
             } else if (world.gravity < 0) {
                 this.angle = Math.PI;
-            } 
+            }
         } else if (world.gravityDir === w4.world.constants.xdir) {
             if (world.gravity > 0) {
                 this.angle = 3 * Math.PI / 2;
@@ -91,9 +91,7 @@ sprite.PhysicsSprite = function (width, height, x, y) {
 
     this.update = function (world, dt) {
         var xnew,
-            ynew,
-            hDisp,
-            yDisp;
+            ynew;
 
         /* set state based on any pressed keys */
         if (game.key.pressed[game.key.keys.LEFT]) {

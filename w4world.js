@@ -8,7 +8,7 @@ var w4 = w4 || {};
 var world = game.namespace('world', w4);
 
 world.constants = {ydir: 0, // named constants for gravity direction
-                   xdir: 1}
+                   xdir: 1};
 
 world.World = function (x0, y0, w, h, num) {
     var tSize = w4.constants.tileSize;
@@ -58,10 +58,10 @@ world.World = function (x0, y0, w, h, num) {
 
         ctx.fillStyle = this.bgColor;
         ctx.fillRect(0, 0, this.width, this.height);
-        ctx.drawImage(this.arrowImage, this.width / 2 - this.arrowImage.width / 2, this.height / 2 - this.arrowImage.height / 2);
+        ctx.drawImage(this.arrowImage, this.width / 2 - this.arrowImage.width / 2,
+                      this.height / 2 - this.arrowImage.height / 2);
         /* draw the tiles */
-        ctx.fillStyle = "#9D9D9D";
-        ctx.fillStyle = w4.constants.grd;
+        ctx.fillStyle = w4.level.tileGrd;
         for (y = 0; y < this.th; y += 1) {
             for (x = 0; x < this.tw; x += 1) {
                 cell = level.getTileValue(x + this.tx0, y + this.ty0);
@@ -76,7 +76,7 @@ world.World = function (x0, y0, w, h, num) {
         if (this.hasPlayer) {
             w4.player.player.draw(ctx);
         }
-    }
+    };
 
     this.pixelToTile = function (p) {
         return Math.floor(p / w4.constants.tileSize);
@@ -91,9 +91,7 @@ world.World = function (x0, y0, w, h, num) {
             yGlob,
             xWorld,
             yWorld,
-            val,
-            tval,
-            localPos;
+            tval;
 
         // get the global tile index, which takes account for periodic bcs
         tileIndx = level.globalTileIndexPeriodic(x, y, this.tx0, this.ty0);
@@ -108,7 +106,7 @@ world.World = function (x0, y0, w, h, num) {
             // we need to return the position of the tile in local co-ords
             xWorld = xGlob - this.x0;
             yWorld = yGlob - this.y0;
-            
+
             hitBox = {x : xWorld,
                       y: yWorld,
                       width: tSize,

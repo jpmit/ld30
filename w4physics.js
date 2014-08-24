@@ -225,7 +225,7 @@ physics.crazyWorldStepX = function (entity, world, dt) {
     if (entity.jump && (!entity.jumping) && entity.onfloor) {
         entity.ddx = world.impulse;
         entity.dx = 0;
-        w4.jukebox.playSfx('jump');        
+        w4.jukebox.playSfx('jump');
         entity.jumping = true;
         entity.onfloor = false;
     }
