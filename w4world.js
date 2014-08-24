@@ -13,8 +13,12 @@ world.constants = {ydir: 0, // named constants for gravity direction
 world.World = function (x0, y0, w, h, num) {
     var tSize = w4.constants.tileSize;
 
+    this.rect = {x: x0, y: y0, width: w, height: h};
+
     this.x0 = x0;
     this.y0 = y0;
+    this.tx0 = x0 / tSize;
+    this.ty0 = y0 / tSize;
     this.num = num;
     this.width = w;
     this.height = h;
@@ -49,10 +53,8 @@ world.World = function (x0, y0, w, h, num) {
     this.drawBackground = function (ctx) {
         var x,
             y,
+            level = w4.level.currentLevel,
             cell;
-    //        grd=ctx.createLinearGradient(0,100,150,0);
-    //    grd.addColorStop(0,"#00051D");//black");
-    //    grd.addColorStop(1,"#A2ABD4");//"grey");
 
         ctx.fillStyle = this.bgColor;
         ctx.fillRect(0, 0, this.width, this.height);
@@ -62,7 +64,7 @@ world.World = function (x0, y0, w, h, num) {
         ctx.fillStyle = w4.constants.grd;
         for (y = 0; y < this.th; y += 1) {
             for (x = 0; x < this.tw; x += 1) {
-                cell = this.tileToValue(x, y);
+                cell = level.getTileValue(x + this.tx0, y + this.ty0);
                 if (cell) {
                     ctx.fillRect(x * tSize, y * tSize, tSize, tSize);
                 }
@@ -76,104 +78,45 @@ world.World = function (x0, y0, w, h, num) {
         }
     }
 
-    this.tileToValue = function (x, y) {
-        return this.celldata[x + (y * this.tw)];
-    };
-
     this.pixelToTile = function (p) {
         return Math.floor(p / w4.constants.tileSize);
     };
 
-    // this handles (i) -ve x and y values (ii) x and y values greater
-    // than or equal to this.tw, this.th i.e. the adjacent world
-    this.getGlobalTile = function (x, y) {
-        var indx = x,
-            indy = y;
-        // world 0 is fine
-        if (this.num == 1) {
-            if (x < 0) {
-                indx = x + this.tw;
-            }
-            if (y >= this.th) {
-                indx = x + this.tw;
-            }
-        } else if (this.num == 2) {
-            if (x < 0) {
-                indx = x + this.tw;
-                indy = y + this.th;
-            }
-        } else if (this.num == 3) {
-            if (x >= this.tw) {
-                indy = y + this.th;
-            }
-        }
-        return {x: indx, y: indy};
-    };
-
-    this.globalTileToValue = function (x, y) {
-        return this.levelData[x + (y * 2 * this.tw)];
-    }
-
+    // x and y are local (world) tile co-ords here
     this.tileHitbox = function (x, y) {
-        var hitBox = null,
+        var level = w4.level.currentLevel,
+            hitBox = null,
+            tileIndx,
+            xGlob,
+            yGlob,
+            xWorld,
+            yWorld,
             val,
-            t,
-            xv,
-            yv;
+            tval,
+            localPos;
 
-        if (x < this.tw && x >= 0 && y < this.th && y >= 0) {
-            val = this.tileToValue(x, y);
-            if (val > 0) {
-                hitBox = {x: x * tSize,
-                          y: y * tSize,
-                          width: tSize,
-                          height: tSize};
-            }
-        } else {
-            // edge cases, at boundary of the world
-            t = this.getGlobalTile(x, y);
-//            console.log(t);
-            val = this.globalTileToValue(t.x, t.y);
-            if (val > 0) {
-                if (t.x < 0) {
-                    xv = 0;
-                } else if (t.x >= this.tw) {
-                    xv = this.tw * tSize;
-                } else {
-                    xv = x * tSize;
-                }
-                if (t.y < 0) {
-                    yv = 0;
-                } else if (t.y >= this.ty) {
-                    yv = this.th * tSize;
-                } else {
-                    yv = y * tSize;
-                }
-                hitBox = {x: xv,
-                          y: yv,
-                          width: tSize,
-                          height: tSize};
-            }
+        // get the global tile index, which takes account for periodic bcs
+        tileIndx = level.globalTileIndexPeriodic(x, y, this.tx0, this.ty0);
+
+        // get the tile value
+        tval = level.getTileValue(tileIndx[0], tileIndx[1]);
+
+        // could have different size hitboxes for different tiles here
+        if (tval > 0) {
+            xGlob = tileIndx[0] * tSize;
+            yGlob = tileIndx[1] * tSize;
+            // we need to return the position of the tile in local co-ords
+            xWorld = xGlob - this.x0;
+            yWorld = yGlob - this.y0;
+            
+            hitBox = {x : xWorld,
+                      y: yWorld,
+                      width: tSize,
+                      height: tSize
+                     };
         }
+
         return hitBox;
-    };
-
-    this.loadLevel = function (levelData) {
-        var i,
-            j,
-            tw = w4.constants.totalTileWidth,
-            start = (this.y0 / tSize) * tw + this.x0 / tSize,
-            index;
-
-        // store complete level data for 'ghosting'
-        this.levelData = levelData;
-
-        for (j = 0; j < this.th; j += 1) {
-            for (i = 0; i < this.tw; i += 1) {
-                index = start + (j * tw) + i;
-                this.celldata.push(levelData[index]);
-            }
-        }
     };
 
     this.update = function (dt) {

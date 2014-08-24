@@ -22,11 +22,14 @@ w4.constants = {
     /* physics constants (for the normal axes) */
     gravity: 1000,
     maxdx: 150,
-    maxdy: 400,
+    maxdy: 300,
     accel: 4000,
     friction: 500,
     impulse: 24000
 };
+
+w4.constants.globWidth = 2 * w4.constants.worldWidth;
+w4.constants.globHeight = 2 * w4.constants.worldHeight;
 
 w4.mainScene = function () {
     var canvas = document.getElementById("w4"),
@@ -56,50 +59,36 @@ w4.mainScene = function () {
             player = w4.player.player,
             prevWorldIn = player.worldIn,
             worldIn,
+            wi,
             wo,
             xshift = 0, // xshift and yshift tell us how to get to global co-ords from world co-ords
             yshift = 0,
             xshift2 = 0,
-            yshift2 = 0;
+            yshift2 = 0,
+            locx,
+            locy;
 
-        /* assign the player to the correct world */
+        // assign the player to the correct world
         worldIn = this.assignToWorld(player);
-        if (worldIn === 1 || worldIn === 2) {
-            xshift = -wWidth;
-        }
-        if (worldIn === 2 || worldIn === 3) {
-            yshift = -wHeight;
-        }
+
 
         if (worldIn !== prevWorldIn) {
             w4.jukebox.playSfx('switch');
-            // compute relative
-            if ((prevWorldIn === 0 || prevWorldIn === 3) && (worldIn == 1 || worldIn == 2)) {
-                // moving 1 to the right
-                xshift2 = -wWidth;
-            } else if ((prevWorldIn == 1 || prevWorldIn == 2) && (worldIn == 0 || worldIn == 3)) {
-                // moving 1 to the left
-                xshift2 = wWidth;
-            }
-            if ((prevWorldIn === 0 || prevWorldIn === 1) && (worldIn ==  2 || worldIn == 3)) {
-                // moving 1 down
-                yshift2 = -wHeight;
-            } else if ((prevWorldIn == 2 || prevWorldIn == 3) && (worldIn == 0 || worldIn == 1)) {
-                // moving 1 up
-                yshift2 = wHeight;
-            }
-            
+
+            // compute local co-ords from the global co-ords
+            wi = worlds[worldIn];
+            locx = player.globalRect.x - wi.x0;
+            locy = player.globalRect.y - wi.y0;
+            console.log(locx, locy);
+
             player.worldIn = worldIn;
             player.setAngle(worlds[worldIn]);
-//            console.log(player.hitbox.x, player.hitbox.y);
-            player.hitbox.x = player.hitbox.x + xshift2;
-            player.hitbox.y = player.hitbox.y + yshift2;
-            //console.log(player.hitbox.x, player.hitbox.y, xshift2, yshift2);
+            // set the local world coords
+            player.hitbox.x = locx;
+            player.hitbox.y = locy;
         }
-
-//        console.log(player.worldIn);
         
-        /* note the constant time stepping here!!! */
+        // note the constant time stepping here!!!
         while (game.dt > tStep) {
             game.dt = game.dt - tStep;
             for (i = 0; i < nWorlds; i += 1) {
@@ -107,7 +96,15 @@ w4.mainScene = function () {
             }
         }
 
-        /* update the global co-ords of the player */
+        // shift applied to the local world co-ords (modified by the
+        // world update) to get the global co-ords.
+        if (worldIn === 1 || worldIn === 2) {
+            xshift = -wWidth;
+        }
+        if (worldIn === 2 || worldIn === 3) {
+            yshift = -wHeight;
+        }
+
         player.globalRect.x = player.rect.x - xshift;
         player.globalRect.y = player.rect.y - yshift;
 
@@ -115,21 +112,32 @@ w4.mainScene = function () {
     };
 
     this.assignToWorld = function (player) {
-        var pos = player.getBottomRight(),
+        var pos = player.getCenter(), // global co-ords
             worldIn,
+            gWidth = w4.constants.globWidth,
+            gHeight = w4.constants.globHeight,
+            inRect = w4.rect.inAABB,
             i;
 
-        /* worlds are ordered anti-clockwise from top left */
-        if (pos[0] > w4.constants.worldWidth) {
-            if (pos[1] > w4.constants.worldHeight) {
-                worldIn = 2;
-            } else {
-                worldIn = 1;
+        /* apply periodic boundary conditions */
+        if (pos[0] < 0) {
+            pos[0] = pos[0] + gWidth;
+        } else if (pos[0] > gWidth) {
+            pos[0] = pos[0] - gWidth;
+        }
+        if (pos[1] < 0) {
+            pos[1] = pos[1] + gHeight;
+        } else if (pos[1] > gHeight) {
+            pos[1] = pos[1] - gHeight;
+        }
+
+        player.setCenter(pos);
+
+        for (i = 0; i < nWorlds; i += 1) {
+            if (inRect(worlds[i].rect, pos)) {
+                worldIn = i;
+                break;
             }
-        } else if (pos[1] > w4.constants.worldHeight) {
-            worldIn = 3;
-        } else {
-            worldIn = 0;
         }
 
         for (i = 0; i < nWorlds; i += 1) {
@@ -140,20 +148,17 @@ w4.mainScene = function () {
             }
         }
 
+
         return worldIn;
     };
 
     this.loadLevel = function (num) {
-        var ldata =  w4.leveldata[num.toString()],
-            celldata = ldata.layers[0].data,
-            i;
+        var ldata =  w4.leveldata[num.toString()];
 
-        /* player should eventually be loaded from json data */
+        w4.level.currentLevel = new w4.level.Level(ldata);
+
+        // player should eventually be loaded from json data
         w4.player.player = new w4.sprite.PhysicsSprite(20, 20, 50, 50);
-
-        for (i = 0; i < nWorlds; i += 1) {
-            worlds[i].loadLevel(celldata);
-        }
     };
 
     this.draw = function () {

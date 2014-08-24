@@ -160,13 +160,16 @@ physics.normalWorldCollideY = function (entity, world, ynew) {
                     entity.hitbox.y = hBox.y + hBox.height;
                     if (world.gravity < 0) {
                         entity.onfloor = true;
+                        entity.jumping = false;
                     }
 //                    console.log('jumed!');
                 } else {
                     entity.hitbox.y = hBox.y - entity.hitbox.height;
                     if (world.gravity > 0) {
                         entity.onfloor = true;
+                        entity.jumping = false;
                     }
+//                    console.log('jumed!', xtile, ytilenew);
                 }
                 break;
             } else {
@@ -273,20 +276,20 @@ physics.crazyWorldCollideY = function (entity, world, ynew) {
     if (ytileold !== ytilenew) {
         xtileleft = world.pixelToTile(xold);
         xtileright = world.pixelToTile(xold + entity.hitbox.width - 1);
-        console.log(ytilenew, xtileleft, xtileright);
+//        console.log(ytilenew, xtileleft, xtileright);
         for (xtile = xtileleft; xtile <= xtileright; xtile += 1) {
             hBox = world.tileHitbox(xtile, ytilenew);
 //            console.log('checking', xtilenew, ytile, hBox);
             if (hBox) {
-                console.log('hi!!!');
+//                console.log('hi!!!');
                 entity.dy = 0;
                 entity.ddy = 0;
                 if (ynew > yold) {
                     // moving 'downwards'
                     entity.hitbox.y = hBox.y - entity.hitbox.height;
-                    console.log('hit downwards!', xtile, ytilenew, hBox.y);
+//                    console.log('hit downwards!', xtile, ytilenew, hBox.y);
                 } else {
-                    console.log('hit upwards!');
+//                    console.log('hit upwards!');
                     entity.hitbox.y = hBox.y + hBox.height;
                 }
             }

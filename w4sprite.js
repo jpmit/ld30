@@ -151,6 +151,15 @@ sprite.PhysicsSprite = function (width, height, x, y) {
     this.getBottomRight = function () {
         return [this.globalRect.x + this.rect.width, this.globalRect.y + this.rect.height];
     };
+
+    this.getCenter = function () {
+        return [this.globalRect.x + this.rect.width / 2, this.globalRect.y + this.rect.height / 2];
+    };
+
+    this.setCenter = function (pos) {
+        this.globalRect.x = pos[0] - this.rect.width / 2;
+        this.globalRect.y = pos[1] - this.rect.height / 2;
+    };
 };
 
 sprite.PhysicsSprite.prototype = new sprite.Sprite();
