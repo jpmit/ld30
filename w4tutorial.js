@@ -13,7 +13,8 @@ tutorial.tutData = {
     "2": [["This might take some getting used to..."],
           ["By the way, he arrows tell you",
            "the direction of gravity"],
-          ["Good luck!"]]
+          ["Good luck!"]],
+    "3": [["You can try 'bouncing' between worlds", "to pick up some extra speed"]]
 };
 
 tutorial.hasTutorial = function (lnum) {

@@ -46,6 +46,16 @@ scene.mainScene = function (lnum) {
             return;
         }
 
+        // update worlds: this will move the player.
+        // note the constant time stepping here!!!
+        while (game.dt > tStep) {
+            game.dt = game.dt - tStep;
+            for (i = 0; i < nWorlds; i += 1) {
+                worlds[i].update(tStep);
+            }
+            dtTot += tStep;
+        }
+
         // assign the player to the correct world
         worldIn = this.assignToWorld(player);
 
@@ -56,22 +66,15 @@ scene.mainScene = function (lnum) {
             wi = worlds[worldIn];
             locx = player.globalRect.x - wi.x0;
             locy = player.globalRect.y - wi.y0;
-            console.log(locx, locy);
+            console.log(worldIn, prevWorldIn, player.globalRect.x, player.globalRect.y, locx, locy);
 
             player.worldIn = worldIn;
             player.setAngle(worlds[worldIn]);
             // set the local world coords
             player.hitbox.x = locx;
             player.hitbox.y = locy;
-        }
-
-        // note the constant time stepping here!!!
-        while (game.dt > tStep) {
-            game.dt = game.dt - tStep;
-            for (i = 0; i < nWorlds; i += 1) {
-                worlds[i].update(tStep);
-            }
-            dtTot += tStep;
+            player.rect.x = locx;
+            player.rect.y = locy;
         }
 
         // shift applied to the local world co-ords (modified by the
@@ -308,7 +311,7 @@ scene.levelCompleteScene = function (mScene) {
     newctx.drawImage(oldCanvas, 0, 0);
 
     // next scene
-    console.log(this.nextlev, w4.constants.numLevels);
+//    console.log(this.nextlev, w4.constants.numLevels);
     if (this.nextlev > w4.constants.numLevels) {
         this.nextScene = new scene.gameCompleteScene();
         // immediately change scene

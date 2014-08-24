@@ -94,13 +94,18 @@ sprite.PhysicsSprite = function (impath) {
     this.right = true;
     this.jump = null;
 
+    // we pass the global position here
     this.setPosition = function(x, y) {
-        this.rect.x = x;
-        this.rect.y = y;
-        this.hitbox.x = x;
-        this.hitbox.y = y;
+        var wor = w4.world.worlds[this.worldIn],
+            xWorld = x - wor.x0,
+            yWorld = y - wor.y0;
         this.globalRect.x = x;
         this.globalRect.y = y;
+
+        this.rect.x = xWorld;
+        this.rect.y = yWorld;
+        this.hitbox.x = xWorld;
+        this.hitbox.y = yWorld;
         this.onfloor = false;
     };
 

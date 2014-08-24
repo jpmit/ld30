@@ -60,26 +60,22 @@ level.Level = function (ldata) {
             worldIn,
             i;
 
-        w4.player.player.setPosition(pX, pY);
         // get world number
-        if (level.playerPosition.x < wWidth) {
-            if (level.playerPosition.y < wHeight) {
+        if (pX < wWidth) {
+            if (pY < wHeight) {
                 worldIn = 0;
             } else {
                 worldIn = 3;
             }
         } else {
-            if (level.playerPosition.y < wHeight) {
+            if (pY < wHeight) {
                 worldIn = 1;
             } else {
                 worldIn = 2;
             } 
         }
-        // set angle and velocities and accels etc.
-        player.dy = 0;
-        player.ddy = 0;
-        player.dx = 0;
-        player.ddx = 0;
+        player.worldIn = worldIn;
+        w4.player.player.setPosition(pX, pY);
         player.setAngle(worlds[worldIn]);
         for (i = 0; i < w4.constants.nWorlds; i += 1) {
             if (i === worldIn) {
@@ -88,6 +84,11 @@ level.Level = function (ldata) {
                 worlds[i].hasPlayer = false;
             }
         }
+        // set angle and velocities and accels etc.
+        player.dy = 0;
+        player.ddy = 0;
+        player.dx = 0;
+        player.ddx = 0;
     };
 };
 
