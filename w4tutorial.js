@@ -11,8 +11,7 @@ tutorial.tutData = {
           ["Apart from those pesky spikes!"]
           ],
     "2": [["This might take some getting used to..."],
-          ["By the way, he arrows tell you",
-           "the direction of gravity"],
+          ["By the way, in case you hadn't noticed", "the arrows tell you the direction of gravity"],
           ["Good luck!"]],
     "3": [["You can try 'bouncing' between worlds", "to pick up some extra speed"]]
 };
@@ -44,7 +43,7 @@ tutorial.tutorialScene = function (lnum) {
             e = k.events[i];
             if (e.kc === k.keys.RETURN && (!e.down)) {
                 this.index += 1;
-                console.log(this.index, this.data.length);
+//                console.log(this.index, this.data.length);
                 if (this.index === this.data.length) {
                     this.isFinished = true;
                 } else {

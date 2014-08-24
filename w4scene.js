@@ -66,7 +66,7 @@ scene.mainScene = function (lnum) {
             wi = worlds[worldIn];
             locx = player.globalRect.x - wi.x0;
             locy = player.globalRect.y - wi.y0;
-            console.log(worldIn, prevWorldIn, player.globalRect.x, player.globalRect.y, locx, locy);
+//            console.log(worldIn, prevWorldIn, player.globalRect.x, player.globalRect.y, locx, locy);
 
             player.worldIn = worldIn;
             player.setAngle(worlds[worldIn]);
