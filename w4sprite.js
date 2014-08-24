@@ -29,6 +29,13 @@ sprite.Sprite = function (impath, x, y, xoff, yoff) {
         return dt;
     };
 
+    this.setPosition = function (x, y) {
+        this.rect.x = x;
+        this.rect.y = y;
+        this.hitBox.x = x;
+        this.hitBox.y = y;
+    };
+
     this.draw = function (ctx) {
 //        console.log(this.rect.x, this.rect.y);
         ctx.save();

@@ -20,7 +20,7 @@ level.loadLevel = function (num) {
     level.currentLevel.resetPlayer();
     
     // the door
-    level.doorSprite = new w4.sprite.Sprite("images/door.png", doorX, doorY, 10, 10);
+    level.doorSprite.setPosition(doorX, doorY);
 };
 
 level.Level = function (ldata) {

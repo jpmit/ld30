@@ -56,9 +56,11 @@ w4.init = function () {
 
     // num times the player has been spiked
     w4.level.nDeath = 0;
+
+    w4.level.doorSprite = new w4.sprite.Sprite("images/door.png", -100, -100, 10, 10);
     
-    // number of levels in the game
-    w4.constants.numLevels = Object.keys(w4.leveldata).length;
+    // number of levels in the game (zeroth level is for testing ;)
+    w4.constants.numLevels = Object.keys(w4.leveldata).length - 1;
 
     // the four worlds
     w4.world.worlds = [new w4.world.World(0, 0, w, h, 0), new w4.world.World(w, 0, w, h, 1),

@@ -230,7 +230,7 @@ scene.titleScene = function () {
             this.next = new scene.mainScene(1);
         }
 
-        for (i = 1; i < numKeyCodes.length; i += 1) {
+        for (i = 0; i < numKeyCodes.length; i += 1) {
             if (game.key.pressed[numKeyCodes[i]]) {
                 if (i <= w4.constants.numLevels) {
                     this.next = new scene.mainScene(i);
