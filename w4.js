@@ -44,6 +44,11 @@ w4.mainScene = function () {
     canvas.height = 2 * w4.constants.worldHeight;
     ctx = canvas.getContext('2d');
 
+    // gradient for drawing the levels
+    w4.constants.grd = ctx.createLinearGradient(0,100,150,0);
+    w4.constants.grd.addColorStop(0,"#00051D");//black");
+    w4.constants.grd.addColorStop(1,"#A2ABD4");//"grey");
+
     this.update = function (dt) {
         var i,
             wWidth = w4.constants.worldWidth,

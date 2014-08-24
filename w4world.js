@@ -50,12 +50,16 @@ world.World = function (x0, y0, w, h, num) {
         var x,
             y,
             cell;
+    //        grd=ctx.createLinearGradient(0,100,150,0);
+    //    grd.addColorStop(0,"#00051D");//black");
+    //    grd.addColorStop(1,"#A2ABD4");//"grey");
 
         ctx.fillStyle = this.bgColor;
         ctx.fillRect(0, 0, this.width, this.height);
         ctx.drawImage(this.arrowImage, this.width / 2 - this.arrowImage.width / 2, this.height / 2 - this.arrowImage.height / 2);
         /* draw the tiles */
-        ctx.fillStyle = "#98ABFD";
+        ctx.fillStyle = "#9D9D9D";
+        ctx.fillStyle = w4.constants.grd;
         for (y = 0; y < this.th; y += 1) {
             for (x = 0; x < this.tw; x += 1) {
                 cell = this.tileToValue(x, y);
