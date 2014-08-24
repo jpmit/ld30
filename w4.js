@@ -49,13 +49,17 @@ w4.init = function () {
     w4.level.tileGrd.addColorStop(0, "#00051D");
     w4.level.tileGrd.addColorStop(1, "#A2ABD4");
 
+    // number of levels in the game
+    w4.constants.numLevels = Object.keys(w4.leveldata).length;
+
     w4.jukebox = new game.juke.Juke();
     w4.jukebox.loadMusic({'main': 'sounds/song1'});
     w4.jukebox.loadSfx({'complete': 'sounds/complete',
                         'jump': 'sounds/jump',
                         'spike': 'sounds/spike',
                         'switch': 'sounds/switch',
-                        'nice': 'sounds/nice'
+                        'nice': 'sounds/nice',
+                        'applause': 'sounds/applause',
                        });
     w4.jukebox.playMusic('main');
 

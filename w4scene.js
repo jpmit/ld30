@@ -188,6 +188,44 @@ scene.titleScene = function () {
 
 scene.titleScene.prototype = new game.scene.BaseScene();
 
+scene.gameCompleteScene = function () {
+    var ctx = w4.screen.ctx,
+        width = w4.screen.canvas.width,
+        height = w4.screen.canvas.height,
+        line1 = "Game complete!",
+        line2 = "Well done!",
+        tPassed = 0;
+
+    this.next = this;
+
+    w4.jukebox.playSfx('applause');
+
+    function drawCenteredText(txt, ypos) {
+        ctx.fillText(txt, width / 2 - ctx.measureText(txt).width / 2, ypos);
+    }
+        
+    this.draw = function () {
+        ctx.fillStyle = "#9CA0FF";
+        ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = "black";
+        ctx.font = "80px Lobster";
+        drawCenteredText(line1, 300);
+        ctx.font = "50px Lobster";
+        drawCenteredText(line2, 380);
+
+    };
+
+    this.update = function (dt) {
+        tPassed += dt;
+        if (tPassed > 3) {
+            this.next = new scene.titleScene();
+        }
+        game.dt = 0;
+    };
+};
+
+scene.gameCompleteScene.prototype = new game.scene.BaseScene();
+
 scene.levelCompleteScene = function (mScene) {
     var oldCanvas = w4.screen.canvas,
         newCanvas = document.createElement('canvas'),
@@ -213,7 +251,14 @@ scene.levelCompleteScene = function (mScene) {
     newctx.drawImage(oldCanvas, 0, 0);
 
     // next scene
-    this.nextScene = new scene.mainScene(this.nextlev);
+    console.log(this.nextlev, w4.constants.numLevels);
+    if (this.nextlev > w4.constants.numLevels) {
+        this.nextScene = new scene.gameCompleteScene();
+        // immediately change scene
+        this.next = this.nextScene;
+    } else {
+        this.nextScene = new scene.mainScene(this.nextlev);
+    }
 
     this.update = function (dt) {
         this.tPassed += dt;
