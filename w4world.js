@@ -11,7 +11,9 @@ world.constants = {ydir: 0, // named constants for gravity direction
                    xdir: 1};
 
 world.World = function (x0, y0, w, h, num) {
-    var tSize = w4.constants.tileSize;
+    var backCanvas = document.createElement('canvas'),
+        backCtx = backCanvas.getContext('2d'),
+        tSize = w4.constants.tileSize;
 
     this.rect = {x: x0, y: y0, width: w, height: h};
 
@@ -49,30 +51,55 @@ world.World = function (x0, y0, w, h, num) {
         this.impulse = w4.constants.impulse;
         this.gravityDir = world.constants.ydir;
     }
-
-    this.drawBackground = function (ctx) {
+    
+    // render the entire background to my own canvas (called once)
+    this.renderBackground = function (ctx) {
         var x,
             y,
             level = w4.level.currentLevel,
-            cell;
+            tVal,
+            tx,
+            ty,
+            tImage = w4.level.tileImage;
 
-        ctx.fillStyle = this.bgColor;
-        ctx.fillRect(0, 0, this.width, this.height);
-        ctx.drawImage(this.arrowImage, this.width / 2 - this.arrowImage.width / 2,
-                      this.height / 2 - this.arrowImage.height / 2);
-        /* draw the tiles */
-        ctx.fillStyle = w4.level.tileGrd;
+        backCanvas.width = w4.constants.worldWidth;
+        backCanvas.height = w4.constants.worldHeight;
+
+        backCtx.fillStyle = this.bgColor;
+        backCtx.fillRect(0, 0, this.width, this.height);
+/*        backCtx.drawImage(this.arrowImage, this.width / 2 - this.arrowImage.width / 2,
+                          this.height / 2 - this.arrowImage.height / 2);*/
+        // draw the tiles
+        backCtx.fillStyle = w4.level.tileGrd;
         for (y = 0; y < this.th; y += 1) {
             for (x = 0; x < this.tw; x += 1) {
-                cell = level.getTileValue(x + this.tx0, y + this.ty0);
-                if (cell) {
-                    ctx.fillRect(x * tSize, y * tSize, tSize, tSize);
+                tVal = level.getTileValue(x + this.tx0, y + this.ty0);
+                if (tVal > 0) {
+                    if (tVal == 1) {
+                        // actual level; we don't use a tile for this,
+                        // but just a rect since that gives us this
+                        // nice? looking gradient.
+                        backCtx.fillRect(x * tSize, y * tSize, tSize, tSize);
+                    } else {
+                        // the tileset is 2 * 3 but top left index is 1
+                        tx = ((tVal - 1) % 2);
+                        ty = Math.floor((tVal - 1) / 2);
+                        // use a tile image
+                        backCtx.drawImage(tImage, tx * tSize, ty * tSize, tSize, tSize, x * tSize, y * tSize, tSize, tSize);
+                    }
                 }
             }
         }
     };
 
+    this.drawBackground = function (ctx) {
+        // easy!
+        ctx.drawImage(backCanvas, 0, 0);
+    };
+
     this.drawForeground = function (ctx) {
+        ctx.drawImage(this.arrowImage, this.width / 2 - this.arrowImage.width / 2,
+                          this.height / 2 - this.arrowImage.height / 2);
         if (this.hasPlayer) {
             w4.player.player.draw(ctx);
         }
@@ -110,7 +137,8 @@ world.World = function (x0, y0, w, h, num) {
             hitBox = {x : xWorld,
                       y: yWorld,
                       width: tSize,
-                      height: tSize
+                      height: tSize,
+                      isSpike: tval > w4.constants.spikeTileVal ? true : false
                      };
         }
 

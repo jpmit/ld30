@@ -16,10 +16,13 @@ w4.constants = {
     tileSize: 16,
     totalTileWidth: 60,
     totalTileHeight: 40,
+    // all tiles in the cell data with values greater than spikeTile
+    // are treated as spikes
+    spikeTileVal: 2,
     bgColors: ["#F2F1E5", "#DDDBB6", "#CCC97F", "#ECE89E"],
     gravityDir: ["down", "right", "left", "up"],
     arrowImages: ["arrowdown.png", "arrowright.png", "arrowleft.png", "arrowup.png"],
-    /* physics constants (for the normal axes) */
+    // physics constants (for the normal axes)
     gravity: 1000,
     maxdx: 150,
     maxdy: 300,
@@ -36,7 +39,9 @@ w4.player = {};
 w4.jukebox = null;
 
 w4.init = function () {
-    var startScene;
+    var startScene,
+        w = w4.constants.worldWidth,
+        h = w4.constants.worldHeight;
 
     w4.screen.canvas = document.getElementById("w4");
     w4.screen.canvas.width = 2 * w4.constants.worldWidth;
@@ -51,6 +56,10 @@ w4.init = function () {
 
     // number of levels in the game
     w4.constants.numLevels = Object.keys(w4.leveldata).length;
+
+    // the four worlds
+    w4.world.worlds = [new w4.world.World(0, 0, w, h, 0), new w4.world.World(w, 0, w, h, 1),
+                       new w4.world.World(w, h, w, h, 2), new w4.world.World(0, h, w, h, 3)];
 
     w4.jukebox = new game.juke.Juke();
     w4.jukebox.loadMusic({'main': 'sounds/song1'});

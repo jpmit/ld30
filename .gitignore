@@ -4,3 +4,4 @@ old
 *.tmx
 levels/*.png
 *.wav
+*.py

@@ -6,7 +6,24 @@ var w4 = w4 || {};
 
 var sprite = game.namespace('sprite', w4);
 
-sprite.Sprite = function () {
+sprite.Sprite = function (impath, x, y, xoff, yoff) {
+    var img,
+        that = this;
+
+    this.rect = {x: x, y: y};
+    this.hitBox = {x: x + xoff, y: y + yoff};
+
+    img = new Image();
+    img.src = impath;
+    img.onload = function () {
+        that.hwidth = img.width / 2;
+        that.hheight = img.height / 2;
+        that.rect.width = img.width;
+        that.rect.height = img.height;
+        that.hitBox.width = img.width - 2 * xoff;
+        that.hitBox.height = img.height - 2 * yoff;
+    };
+    this.img = img;
 
     this.update = function (dt) {
         return dt;
@@ -132,7 +149,9 @@ sprite.PhysicsSprite = function (impath) {
             this.jump = false;
         }
 
-        /* a possibly slightly inelegant way of handling the two axes */
+        this.hitSpike = false;
+
+        // a possibly slightly inelegant way of handling the two axes
         if (world.gravityDir ===  w4.world.constants.ydir) {
             xnew = w4.physics.normalWorldStepX(this, world, dt);
             w4.physics.normalWorldCollideX(this, world, xnew);
@@ -142,12 +161,11 @@ sprite.PhysicsSprite = function (impath) {
         } else {
             ynew = w4.physics.crazyWorldStepY(this, world, dt);
             w4.physics.crazyWorldCollideY(this, world, ynew);
-            //this.rect.y = ynew;
-            //this.hitbox.y = ynew;
 
             xnew = w4.physics.crazyWorldStepX(this, world, dt);
             w4.physics.crazyWorldCollideX(this, world, xnew);
         }
+        // check if we 
 //        console.log(this.onfloor, this.jumping);
     };
 

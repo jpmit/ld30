@@ -127,6 +127,7 @@ physics.normalWorldCollideY = function (entity, world, ynew) {
         xtileleft,
         xtileright,
         xtile,
+        sVal = w4.constants.spikeTileVal,
         hBox;
 
     entity.onfloor = false;
@@ -170,6 +171,10 @@ physics.normalWorldCollideY = function (entity, world, ynew) {
                         entity.jumping = false;
                     }
 //                    console.log('jumed!', xtile, ytilenew);
+                }
+                // did I hit a spike?
+                if (hBox.isSpike) {
+                    entity.hitSpike = true;
                 }
                 break;
             } else {
@@ -351,6 +356,9 @@ physics.crazyWorldCollideX = function (entity, world, xnew) {
                         entity.onfloor = true;
                         entity.jumping = false;
                     }
+                }
+                if (hBox.isSpike) {
+                    entity.hitSpike = true;
                 }
                 break;
             } else {

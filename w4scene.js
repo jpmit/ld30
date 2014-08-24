@@ -7,18 +7,23 @@ var scene = game.namespace('scene', w4);
 
 scene.mainScene = function (lnum) {
     var ctx = w4.screen.ctx,
-        w = w4.constants.worldWidth,
-        h = w4.constants.worldHeight,
-        worlds = [new w4.world.World(0, 0, w, h, 0), new w4.world.World(w, 0, w, h, 1),
-                  new w4.world.World(w, h, w, h, 2), new w4.world.World(0, h, w, h, 3)],
-        nWorlds = w4.constants.nWorlds,
+        worlds = w4.world.worlds,
+        nWorlds = worlds.length,
         tStep = 1 / game.constants.fps,
-        dtTot = 0;
+        dtTot = 0,
+        i;
 
     this.next = this;
     this.lnum = lnum;
 
     w4.level.loadLevel(this.lnum);
+    w4.jukebox.playSfx('nice');
+
+
+    // draw backgrounds for each of the worlds (since these don't change)
+    for (i = 0; i < nWorlds; i += 1) {
+        worlds[i].renderBackground(ctx);
+    }
 
     this.update = function (dt) {
         var i,
@@ -73,18 +78,23 @@ scene.mainScene = function (lnum) {
         player.globalRect.x = player.rect.x - xshift;
         player.globalRect.y = player.rect.y - yshift;
 
+        // check if we hit a spike
+        if (player.hitSpike) {
+            w4.jukebox.playSfx('spike');
+            // increment number of deaths here
+            w4.level.currentLevel.resetPlayerPosition();
+        }
+
         // check if we completed the level
-        if (this.isComplete()) {
+        if (this.isComplete(player)) {
             this.next = new scene.levelCompleteScene(this);
         }
 
         return dt;
     };
 
-    this.isComplete = function() {
-        if (dtTot > 2) {
-            return true;
-        }
+    this.isComplete = function(player) {
+        return w4.rect.overlapAABB(player.globalRect, w4.level.doorSprite.hitBox);
     }
 
     this.assignToWorld = function (player) {
@@ -138,6 +148,10 @@ scene.mainScene = function (lnum) {
             wor.drawBackground(ctx);
             ctx.restore();
         }
+
+        // draw the door sprite
+        w4.level.doorSprite.draw(ctx);
+
         for (i = 0; i < nWorlds; i += 1) {
             wor = worlds[i];
             ctx.save();
@@ -267,7 +281,6 @@ scene.levelCompleteScene = function (mScene) {
         }
         if (this.tPassed > this.niceTime && (!this.playedNice)) {
             this.playedNice = true;
-            w4.jukebox.playSfx('nice');
         }
 
         this.angle = this.angle + dt;

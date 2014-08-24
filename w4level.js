@@ -6,12 +6,21 @@ var w4 = w4 || {};
 var level = game.namespace('level', w4);
 
 level.loadLevel = function (num) {
-    var ldata =  w4.leveldata[num.toString()];
+    var ldata =  w4.leveldata[num.toString()],
+        doorObj = ldata.layers[1].objects[0],
+        doorX = doorObj.x,
+        doorY = doorObj.y,
+        playerObj = ldata.layers[1].objects[1],
+        playerX = playerObj.x,
+        playerY = playerObj.y;
 
-    w4.level.currentLevel = new w4.level.Level(ldata);
+    level.currentLevel = new w4.level.Level(ldata);
 
-    // player should eventually be loaded from json data
-    w4.player.player.setPosition(20, 20);
+    level.playerPosition = {x: playerX, y: playerY};
+    level.currentLevel.resetPlayerPosition();
+    
+    // the door
+    level.doorSprite = new w4.sprite.Sprite("images/door.png", doorX, doorY, 10, 10);
 };
 
 level.Level = function (ldata) {
@@ -40,7 +49,21 @@ level.Level = function (ldata) {
     this.getTileValue = function (tX, tY) {
         return this.cellData[tX + tY * nTilesX];
     };
+
+    this.resetPlayerPosition = function () {
+        w4.player.player.setPosition(level.playerPosition.x, level.playerPosition.y);
+    };
 };
 
 // currentLevel is accessed by other stuff
 level.currentLevel = null;
+
+// load the tileset
+level.tileImage = null;
+(function () {
+    var img = new Image();
+    img.src = "images/tileset.png";
+    img.onload = function () {
+        level.tileImage = img;
+    }
+})();
