@@ -11,7 +11,7 @@ level.loadLevel = function (num) {
     w4.level.currentLevel = new w4.level.Level(ldata);
 
     // player should eventually be loaded from json data
-    w4.player.player = new w4.sprite.PhysicsSprite(20, 20, 50, 50);
+    w4.player.player.setPosition(20, 20);
 };
 
 level.Level = function (ldata) {

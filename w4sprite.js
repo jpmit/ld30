@@ -30,24 +30,21 @@ sprite.Sprite = function () {
     };
 };
 
-sprite.PhysicsSprite = function (width, height, x, y) {
+sprite.PhysicsSprite = function (impath) {
     var img,
         that = this;
 
-    /* rect uses the World co-ordinate system */
-    this.rect = {x: x, y: y, width: width, height: height};
-    this.hitbox = {x: this.rect.x, y: this.rect.y, width: this.rect.width,
-                   height: this.rect.height};
+    // rect uses the local (world) co-ordinate system
+    this.rect = {};
+    this.hitbox = {};
     this.hitbox.xoff = 0;
     this.hitbox.yoff = 0;
-    /* global co-ords for the entire canvas */
-    this.globalRect = {x: x, y: y, width: width, height: height};
+    // global co-ords for the entire canvas
+    this.globalRect = {};
 
     img = new Image();
-    img.src = "images/w.png";
+    img.src = impath;
     img.onload = function () {
-//        that.width = img.width;
-//        that.height = img.height;
         that.hwidth = img.width / 2;
         that.hheight = img.height / 2;
         that.rect.width = img.width;
@@ -72,6 +69,15 @@ sprite.PhysicsSprite = function (width, height, x, y) {
     this.left = false;
     this.right = true;
     this.jump = null;
+
+    this.setPosition = function(x, y) {
+        this.rect.x = x;
+        this.rect.y = y;
+        this.hitbox.x = x;
+        this.hitbox.y = y;
+        this.globalRect.x = x;
+        this.globalRect.y = y;
+    };
 
     this.setAngle = function (world) {
         if (world.gravityDir === w4.world.constants.ydir) {

@@ -10,13 +10,15 @@ scene.mainScene = function (lnum) {
         w = w4.constants.worldWidth,
         h = w4.constants.worldHeight,
         worlds = [new w4.world.World(0, 0, w, h, 0), new w4.world.World(w, 0, w, h, 1),
-                   new w4.world.World(w, h, w, h, 2), new w4.world.World(0, h, w, h, 3)],
+                  new w4.world.World(w, h, w, h, 2), new w4.world.World(0, h, w, h, 3)],
         nWorlds = w4.constants.nWorlds,
-        tStep = 1 / game.constants.fps;
+        tStep = 1 / game.constants.fps,
+        dtTot = 0;
 
     this.next = this;
+    this.lnum = lnum;
 
-    w4.level.loadLevel(lnum);
+    w4.level.loadLevel(this.lnum);
 
     this.update = function (dt) {
         var i,
@@ -33,7 +35,6 @@ scene.mainScene = function (lnum) {
 
         // assign the player to the correct world
         worldIn = this.assignToWorld(player);
-
 
         if (worldIn !== prevWorldIn) {
             w4.jukebox.playSfx('switch');
@@ -57,6 +58,7 @@ scene.mainScene = function (lnum) {
             for (i = 0; i < nWorlds; i += 1) {
                 worlds[i].update(tStep);
             }
+            dtTot += tStep;
         }
 
         // shift applied to the local world co-ords (modified by the
@@ -71,8 +73,19 @@ scene.mainScene = function (lnum) {
         player.globalRect.x = player.rect.x - xshift;
         player.globalRect.y = player.rect.y - yshift;
 
+        // check if we completed the level
+        if (this.isComplete()) {
+            this.next = new scene.levelCompleteScene(this);
+        }
+
         return dt;
     };
+
+    this.isComplete = function() {
+        if (dtTot > 2) {
+            return true;
+        }
+    }
 
     this.assignToWorld = function (player) {
         var pos = player.getCenter(), // global co-ords
@@ -111,10 +124,8 @@ scene.mainScene = function (lnum) {
             }
         }
 
-
         return worldIn;
     };
-
 
     this.draw = function () {
         var i,
@@ -139,3 +150,95 @@ scene.mainScene = function (lnum) {
 };
 
 scene.mainScene.prototype = new game.scene.BaseScene();
+
+scene.titleScene = function () {
+    var ctx = w4.screen.ctx,
+        width = w4.screen.canvas.width,
+        height = w4.screen.canvas.height,
+        line1 = "W4",
+        line2 = "A game for Ludum Dare 30 by jpmit",
+        line3 = "press space to start";
+
+    this.next = this;
+
+    function drawCenteredText(txt, ypos) {
+        ctx.fillText(txt, width / 2 - ctx.measureText(txt).width / 2, ypos);
+    }
+        
+    this.draw = function () {
+        ctx.fillStyle = "#9CA0FF";
+        ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = "black";
+        ctx.font = "100px Lobster";
+        drawCenteredText(line1, 220);
+        ctx.font = "30px Lobster";
+        drawCenteredText(line2, 290);
+        ctx.font = "50px Lobster";
+        ctx.fillStyle = "#C93936";
+        drawCenteredText(line3, 400);
+    };
+
+    this.update = function (dt) {
+        if (game.key.pressed[game.key.keys.SPACE]) {
+            this.next = new scene.mainScene(1);
+        }
+        game.dt = 0;
+    };
+};
+
+scene.titleScene.prototype = new game.scene.BaseScene();
+
+scene.levelCompleteScene = function (mScene) {
+    var oldCanvas = w4.screen.canvas,
+        newCanvas = document.createElement('canvas'),
+        newctx = newCanvas.getContext('2d'),
+        ctx = w4.screen.ctx;
+
+    this.mScene = mScene;
+    this.next = this;
+
+    this.tPassed = 0.0;
+    this.nextlev = mScene.lnum + 1;
+    this.nextTime = 10;
+    this.niceTime = 1;
+    this.playedNice = false;
+    this.angle = 0;
+
+    w4.jukebox.playSfx('complete');
+    
+    // copy the old canvas to the new canvas
+    newCanvas.width = oldCanvas.width;
+    newCanvas.height = oldCanvas.height;
+    // apply the old canvas to the new one
+    newctx.drawImage(oldCanvas, 0, 0);
+
+    // next scene
+    this.nextScene = new scene.mainScene(this.nextlev);
+
+    this.update = function (dt) {
+        this.tPassed += dt;
+        if (this.angle > Math.PI / 2) {
+            this.next = this.nextScene;
+        }
+        if (this.tPassed > this.niceTime && (!this.playedNice)) {
+            this.playedNice = true;
+            w4.jukebox.playSfx('nice');
+        }
+
+        this.angle = this.angle + dt;
+
+        // we have to do this unfortunately
+        game.dt = 0;
+    };
+
+    // some random and entertaining (?) thing I can create in 10 mins ;)
+    this.draw = function ( ) {
+        this.nextScene.draw();
+        ctx.save();
+        ctx.rotate(this.angle);
+        ctx.drawImage(newCanvas, 0, 0);
+        ctx.restore();
+    };
+};
+
+scene.levelCompleteScene.prototype = new game.scene.BaseScene();

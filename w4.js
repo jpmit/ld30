@@ -54,13 +54,14 @@ w4.init = function () {
     w4.jukebox.loadSfx({'complete': 'sounds/complete',
                         'jump': 'sounds/jump',
                         'spike': 'sounds/spike',
-                        'switch': 'sounds/switch'
+                        'switch': 'sounds/switch',
+                        'nice': 'sounds/nice'
                        });
     w4.jukebox.playMusic('main');
 
-    w4.player.player = null;
+    w4.player.player = new w4.sprite.PhysicsSprite("images/w.png");
     w4.player.worldIn = 0;
 
-    startScene = new w4.scene.mainScene(1);
+    startScene = new w4.scene.titleScene();
     game.main.start(startScene);
 };
