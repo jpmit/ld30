@@ -7,7 +7,7 @@ tutorial.tutData = {
           ["Use the arrow keys to move", "and space to jump"],
           ["You'll have to get to the door", "if you ever want to escape", "these connected worlds"],
           ["That's the box with the red border over on the right"],
-          ["And about theonly thing around here I'm afraid"],
+          ["And about the only thing around here I'm afraid"],
           ["Apart from those pesky spikes!"]
           ],
     "2": [["This might take some getting used to..."],
