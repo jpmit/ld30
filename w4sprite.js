@@ -94,6 +94,7 @@ sprite.PhysicsSprite = function (impath) {
         this.hitbox.y = y;
         this.globalRect.x = x;
         this.globalRect.y = y;
+        this.onfloor = false;
     };
 
     this.setAngle = function (world) {

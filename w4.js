@@ -54,6 +54,9 @@ w4.init = function () {
     w4.level.tileGrd.addColorStop(0, "#00051D");
     w4.level.tileGrd.addColorStop(1, "#A2ABD4");
 
+    // num times the player has been spiked
+    w4.level.nDeath = 0;
+    
     // number of levels in the game
     w4.constants.numLevels = Object.keys(w4.leveldata).length;
 
@@ -69,6 +72,7 @@ w4.init = function () {
                         'switch': 'sounds/switch',
                         'nice': 'sounds/nice',
                         'applause': 'sounds/applause',
+                        'advance': 'sounds/advance'
                        });
     w4.jukebox.playMusic('main');
 

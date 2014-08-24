@@ -11,6 +11,8 @@ scene.mainScene = function (lnum) {
         nWorlds = worlds.length,
         tStep = 1 / game.constants.fps,
         dtTot = 0,
+        tutorialFinished = w4.tutorial.hasTutorial(lnum) ? false : true,
+        tutorial = new w4.tutorial.tutorialScene(lnum),
         i;
 
     this.next = this;
@@ -18,7 +20,6 @@ scene.mainScene = function (lnum) {
 
     w4.level.loadLevel(this.lnum);
     w4.jukebox.playSfx('nice');
-
 
     // draw backgrounds for each of the worlds (since these don't change)
     for (i = 0; i < nWorlds; i += 1) {
@@ -37,6 +38,13 @@ scene.mainScene = function (lnum) {
             yshift = 0,
             locx,
             locy;
+
+        if (!tutorialFinished) {
+            tutorial.update(dt);
+            tutorialFinished = tutorial.isFinished;
+            game.dt = 0;
+            return;
+        }
 
         // assign the player to the correct world
         worldIn = this.assignToWorld(player);
@@ -82,12 +90,18 @@ scene.mainScene = function (lnum) {
         if (player.hitSpike) {
             w4.jukebox.playSfx('spike');
             // increment number of deaths here
-            w4.level.currentLevel.resetPlayerPosition();
+            w4.level.nDeath += 1;
+            w4.level.currentLevel.resetPlayer();
         }
 
         // check if we completed the level
         if (this.isComplete(player)) {
             this.next = new scene.levelCompleteScene(this);
+        }
+
+        // allow escaping back to main menu
+        if (game.key.pressed[game.key.keys.ESCAPE]) {
+            this.next = new scene.titleScene();
         }
 
         return dt;
@@ -149,6 +163,15 @@ scene.mainScene = function (lnum) {
             ctx.restore();
         }
 
+        // draw the number of deaths
+        ctx.font = "15px Shadows Into Light Two";
+        ctx.fillStyle = "black";
+        ctx.fillText("deaths: " + w4.level.nDeath, 30, 50);
+
+        // and the level number
+        ctx.fillText("level " + this.lnum.toString() + " / " + 
+                     w4.constants.numLevels.toString(), 30, 65);
+
         // draw the door sprite
         w4.level.doorSprite.draw(ctx);
 
@@ -158,6 +181,10 @@ scene.mainScene = function (lnum) {
             ctx.translate(wor.x0, wor.y0);
             wor.drawForeground(ctx);
             ctx.restore();
+        }
+
+        if (!tutorialFinished) {
+            tutorial.draw();
         }
     };
 
@@ -171,9 +198,15 @@ scene.titleScene = function () {
         height = w4.screen.canvas.height,
         line1 = "W4",
         line2 = "A game for Ludum Dare 30 by jpmit",
-        line3 = "press space to start";
+        line3 = "press space to start",
+        k = game.key.keys,
+        numKeyCodes = [k.NUM0, k.NUM1, k.NUM2, k.NUM3, k.NUM4,
+                       k.NUM5, k.NUM6, k.NUM7, k.NUM8, k.NUM9],
+        i;
 
     this.next = this;
+
+    w4.level.nDeath = 0;
 
     function drawCenteredText(txt, ypos) {
         ctx.fillText(txt, width / 2 - ctx.measureText(txt).width / 2, ypos);
@@ -196,6 +229,15 @@ scene.titleScene = function () {
         if (game.key.pressed[game.key.keys.SPACE]) {
             this.next = new scene.mainScene(1);
         }
+
+        for (i = 1; i < numKeyCodes.length; i += 1) {
+            if (game.key.pressed[numKeyCodes[i]]) {
+                if (i <= w4.constants.numLevels) {
+                    this.next = new scene.mainScene(i);
+                }
+            }
+        }
+
         game.dt = 0;
     };
 };
@@ -208,6 +250,9 @@ scene.gameCompleteScene = function () {
         height = w4.screen.canvas.height,
         line1 = "Game complete!",
         line2 = "Well done!",
+        nDeath = w4.level.nDeath,
+        line3 = "You died " + nDeath + " times",
+        line4 = nDeath > 0 ? "Try for better next time..." : "Perfect!",
         tPassed = 0;
 
     this.next = this;
@@ -223,15 +268,17 @@ scene.gameCompleteScene = function () {
         ctx.fillRect(0, 0, width, height);
         ctx.fillStyle = "black";
         ctx.font = "80px Lobster";
-        drawCenteredText(line1, 300);
+        drawCenteredText(line1, 200);
         ctx.font = "50px Lobster";
-        drawCenteredText(line2, 380);
-
+        drawCenteredText(line2, 280);
+        ctx.font = "40px Lobster";
+        drawCenteredText(line3, 380);
+        drawCenteredText(line4, 430);
     };
 
     this.update = function (dt) {
         tPassed += dt;
-        if (tPassed > 3) {
+        if (tPassed > 5) {
             this.next = new scene.titleScene();
         }
         game.dt = 0;
@@ -249,11 +296,7 @@ scene.levelCompleteScene = function (mScene) {
     this.mScene = mScene;
     this.next = this;
 
-    this.tPassed = 0.0;
     this.nextlev = mScene.lnum + 1;
-    this.nextTime = 10;
-    this.niceTime = 1;
-    this.playedNice = false;
     this.angle = 0;
 
     w4.jukebox.playSfx('complete');
@@ -278,9 +321,6 @@ scene.levelCompleteScene = function (mScene) {
         this.tPassed += dt;
         if (this.angle > Math.PI / 2) {
             this.next = this.nextScene;
-        }
-        if (this.tPassed > this.niceTime && (!this.playedNice)) {
-            this.playedNice = true;
         }
 
         this.angle = this.angle + dt;

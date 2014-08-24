@@ -17,7 +17,7 @@ level.loadLevel = function (num) {
     level.currentLevel = new w4.level.Level(ldata);
 
     level.playerPosition = {x: playerX, y: playerY};
-    level.currentLevel.resetPlayerPosition();
+    level.currentLevel.resetPlayer();
     
     // the door
     level.doorSprite = new w4.sprite.Sprite("images/door.png", doorX, doorY, 10, 10);
@@ -50,8 +50,44 @@ level.Level = function (ldata) {
         return this.cellData[tX + tY * nTilesX];
     };
 
-    this.resetPlayerPosition = function () {
-        w4.player.player.setPosition(level.playerPosition.x, level.playerPosition.y);
+    this.resetPlayer = function () {
+        var wWidth = w4.constants.worldWidth,
+            wHeight = w4.constants.worldHeight,
+            player = w4.player.player,
+            pX = level.playerPosition.x,
+            pY = level.playerPosition.y,
+            worlds = w4.world.worlds,
+            worldIn,
+            i;
+
+        w4.player.player.setPosition(pX, pY);
+        // get world number
+        if (level.playerPosition.x < wWidth) {
+            if (level.playerPosition.y < wHeight) {
+                worldIn = 0;
+            } else {
+                worldIn = 3;
+            }
+        } else {
+            if (level.playerPosition.y < wHeight) {
+                worldIn = 1;
+            } else {
+                worldIn = 2;
+            } 
+        }
+        // set angle and velocities and accels etc.
+        player.dy = 0;
+        player.ddy = 0;
+        player.dx = 0;
+        player.ddx = 0;
+        player.setAngle(worlds[worldIn]);
+        for (i = 0; i < w4.constants.nWorlds; i += 1) {
+            if (i === worldIn) {
+                worlds[i].hasPlayer = true;
+            } else {
+                worlds[i].hasPlayer = false;
+            }
+        }
     };
 };
 
