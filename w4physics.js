@@ -1,3 +1,5 @@
+// w4physics.js
+// Copyright (c) James Mithen 2014.
 
 'use strict';
 /*global game*/
@@ -45,7 +47,7 @@ physics.normalWorldStepX = function (entity, world, dt) {
 
 physics.normalWorldStepY = function (entity, world, dt) {
     var maxdy = w4.constants.maxdy;
-//    console.log(entity.onfloor);
+
     entity.ddy = 0;
 
     if (entity.jump && (!entity.jumping) && entity.onfloor) {
@@ -102,7 +104,6 @@ physics.normalWorldCollideX = function (entity, world, xnew) {
         ytilebottom = world.pixelToTile(yold + entity.hitbox.height - 1);
         for (ytile = ytiletop; ytile <= ytilebottom; ytile += 1) {
             hBox = world.tileHitbox(xtilenew, ytile);
-//            console.log('checking', xtilenew, ytile, hBox);
             if (hBox) {
                 entity.dx = 0;
                 entity.ddx = 0;
@@ -119,7 +120,6 @@ physics.normalWorldCollideX = function (entity, world, xnew) {
 };
 
 physics.normalWorldCollideY = function (entity, world, ynew) {
-
     var xold = entity.hitbox.x,
         yold = entity.hitbox.y,
         ytileold,
@@ -127,7 +127,6 @@ physics.normalWorldCollideY = function (entity, world, ynew) {
         xtileleft,
         xtileright,
         xtile,
-        sVal = w4.constants.spikeTileVal,
         hBox;
 
     entity.onfloor = false;
@@ -135,11 +134,11 @@ physics.normalWorldCollideY = function (entity, world, ynew) {
     entity.hitbox.y = ynew;
 
     if (ynew < yold) {
-        /* check any tiles at the top */
+        // check any tiles at the top
         ytileold = world.pixelToTile(yold);
         ytilenew = world.pixelToTile(ynew);
     } else if ((ynew > yold) && entity.falling) {
-        /* check any tiles at bottom */
+        // check any tiles at bottom
         ytileold = world.pixelToTile(yold + entity.hitbox.height - 1);
         ytilenew = world.pixelToTile(ynew + entity.hitbox.height - 1);
     } else {
@@ -147,13 +146,12 @@ physics.normalWorldCollideY = function (entity, world, ynew) {
     }
 
     if (ytileold !== ytilenew) {
-        /* leftmost and rightmost x tiles to check */
+        // leftmost and rightmost x tiles to check
         xtileleft = world.pixelToTile(xold);
         xtileright = world.pixelToTile(xold + entity.hitbox.width - 1);
-        /* less than here instead? */
+        // less than here instead?
         for (xtile = xtileleft; xtile <= xtileright; xtile += 1) {
             hBox = world.tileHitbox(xtile, ytilenew);
-//            console.log('checking', xtile, ytilenew, hBox);
             if (hBox) {
                 entity.dy = 0;
                 entity.ddy = 0;
@@ -163,22 +161,18 @@ physics.normalWorldCollideY = function (entity, world, ynew) {
                         entity.onfloor = true;
                         entity.jumping = false;
                     }
-//                    console.log('jumed!');
                 } else {
                     entity.hitbox.y = hBox.y - entity.hitbox.height;
                     if (world.gravity > 0) {
                         entity.onfloor = true;
                         entity.jumping = false;
                     }
-//                    console.log('jumed!', xtile, ytilenew);
                 }
                 // did I hit a spike?
                 if (hBox.isSpike) {
                     entity.hitSpike = true;
                 }
                 break;
-            } else {
-//                console.log('no hit box!', xtile, ytilenew);
             }
         }
     }
@@ -224,7 +218,7 @@ physics.crazyWorldStepY = function (entity, world, dt) {
 
 physics.crazyWorldStepX = function (entity, world, dt) {
     var maxdx = w4.constants.maxdy;
-//    console.log(entity.onfloor);
+
     entity.ddx = 0;
 
     if (entity.jump && (!entity.jumping) && entity.onfloor) {
@@ -281,26 +275,20 @@ physics.crazyWorldCollideY = function (entity, world, ynew) {
     if (ytileold !== ytilenew) {
         xtileleft = world.pixelToTile(xold);
         xtileright = world.pixelToTile(xold + entity.hitbox.width - 1);
-//        console.log(ytilenew, xtileleft, xtileright);
         for (xtile = xtileleft; xtile <= xtileright; xtile += 1) {
             hBox = world.tileHitbox(xtile, ytilenew);
-//            console.log('checking', xtilenew, ytile, hBox);
             if (hBox) {
-//                console.log('hi!!!');
                 entity.dy = 0;
                 entity.ddy = 0;
                 if (ynew > yold) {
                     // moving 'downwards'
                     entity.hitbox.y = hBox.y - entity.hitbox.height;
-//                    console.log('hit downwards!', xtile, ytilenew, hBox.y);
                 } else {
-//                    console.log('hit upwards!');
                     entity.hitbox.y = hBox.y + hBox.height;
                 }
             }
         }
     }
-
     entity.rect.y = entity.hitbox.y - entity.hitbox.yoff;
 };
 
@@ -320,11 +308,11 @@ physics.crazyWorldCollideX = function (entity, world, xnew) {
     entity.hitbox.x = xnew;
 
     if (xnew < xold) {
-        /* check any tiles on the left */
+        // check any tiles on the left
         xtileold = world.pixelToTile(xold);
         xtilenew = world.pixelToTile(xnew);
     } else if ((xnew > xold) && entity.falling) {
-        /* check any tiles on the right */
+        // check any tiles on the right
         xtileold = world.pixelToTile(xold + entity.hitbox.width - 1);
         xtilenew = world.pixelToTile(xnew + entity.hitbox.width - 1);
     } else {
@@ -332,13 +320,12 @@ physics.crazyWorldCollideX = function (entity, world, xnew) {
     }
 
     if (xtileold !== xtilenew) {
-        /* leftmost and rightmost x tiles to check */
+        // leftmost and rightmost x tiles to check
         ytiletop = world.pixelToTile(yold);
         ytilebottom = world.pixelToTile(yold + entity.hitbox.height - 1);
-        /* less than here instead? */
+        // less than here instead?
         for (ytile = ytiletop; ytile <= ytilebottom; ytile += 1) {
             hBox = world.tileHitbox(xtilenew, ytile);
-//            console.log('checking', xtile, ytilenew, hBox);
             if (hBox) {
                 entity.dx = 0;
                 entity.ddx = 0;
@@ -349,7 +336,6 @@ physics.crazyWorldCollideX = function (entity, world, xnew) {
                         entity.onfloor = true;
                         entity.jumping = false;
                     }
-//                    console.log('jumed!');
                 } else {
                     entity.hitbox.x = hBox.x - entity.hitbox.width;
                     if (world.gravity > 0) {
@@ -361,8 +347,6 @@ physics.crazyWorldCollideX = function (entity, world, xnew) {
                     entity.hitSpike = true;
                 }
                 break;
-            } else {
-//                console.log('no hit box!', xtile, ytilenew);
             }
         }
     }

@@ -231,7 +231,7 @@ game.main = (function () {
     var then = Date.now(),
         currentScene = new game.scene.BaseScene();
 
-    // called by window.onload
+    // called at initialisation
     function start(startScene) {
         var mainDraw;
 

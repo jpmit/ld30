@@ -1,6 +1,6 @@
 // w4.js
 // Copyright (c) James Mithen 2014.
-// My entry for Ludum Dare 30.
+// w4 is my entry for Ludum Dare 30.
 
 'use strict';
 /*jslint browser:true */
@@ -58,7 +58,7 @@ w4.init = function () {
     w4.level.nDeath = 0;
 
     w4.level.doorSprite = new w4.sprite.Sprite("images/door.png", -100, -100, 10, 10);
-    
+
     // number of levels in the game (zeroth level is for testing ;)
     w4.constants.numLevels = Object.keys(w4.leveldata).length - 1;
 

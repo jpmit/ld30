@@ -1,5 +1,9 @@
+// w4level.js
+// Copyright (c) James Mithen 2014.
+
 'use strict';
 /*global game*/
+/*global Image*/
 
 var w4 = w4 || {};
 
@@ -18,7 +22,7 @@ level.loadLevel = function (num) {
 
     level.playerPosition = {x: playerX, y: playerY};
     level.currentLevel.resetPlayer();
-    
+
     // the door
     level.doorSprite.setPosition(doorX, doorY);
 };
@@ -72,7 +76,7 @@ level.Level = function (ldata) {
                 worldIn = 1;
             } else {
                 worldIn = 2;
-            } 
+            }
         }
         player.worldIn = worldIn;
         w4.player.player.setPosition(pX, pY);
@@ -102,5 +106,5 @@ level.tileImage = null;
     img.src = "images/tileset.png";
     img.onload = function () {
         level.tileImage = img;
-    }
-})();
+    };
+}());

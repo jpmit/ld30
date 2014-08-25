@@ -1,3 +1,6 @@
+// w4rect.js
+// Copyright (c) James Mithen 2014.
+
 'use strict';
 /*global game*/
 
@@ -16,3 +19,4 @@ rect.inAABB = function (bb, point) {
     return ((point[0] > bb.x) && (point[0] < bb.x + bb.width) &&
             (point[1] > bb.y) && (point[1] < bb.y + bb.height));
 };
+

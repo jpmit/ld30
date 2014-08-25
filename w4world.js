@@ -1,7 +1,11 @@
-'use strict';
+// w4world.js
+// Copyright (c) James Mithen 2014.
 
+'use strict';
 /*global game*/
 /*global Image*/
+/*global w4*/
+/*jslint browser:true*/
 
 var w4 = w4 || {};
 
@@ -51,9 +55,9 @@ world.World = function (x0, y0, w, h, num) {
         this.impulse = w4.constants.impulse;
         this.gravityDir = world.constants.ydir;
     }
-    
+
     // render the entire background to my own canvas (called once)
-    this.renderBackground = function (ctx) {
+    this.renderBackground = function () {
         var x,
             y,
             level = w4.level.currentLevel,
@@ -67,15 +71,14 @@ world.World = function (x0, y0, w, h, num) {
 
         backCtx.fillStyle = this.bgColor;
         backCtx.fillRect(0, 0, this.width, this.height);
-/*        backCtx.drawImage(this.arrowImage, this.width / 2 - this.arrowImage.width / 2,
-                          this.height / 2 - this.arrowImage.height / 2);*/
+
         // draw the tiles
         backCtx.fillStyle = w4.level.tileGrd;
         for (y = 0; y < this.th; y += 1) {
             for (x = 0; x < this.tw; x += 1) {
                 tVal = level.getTileValue(x + this.tx0, y + this.ty0);
                 if (tVal > 0) {
-                    if (tVal == 1) {
+                    if (tVal === 1) {
                         // actual level; we don't use a tile for this,
                         // but just a rect since that gives us this
                         // nice? looking gradient.

@@ -1,5 +1,9 @@
+// w4scene.js
+// Copyright (c) James Mithen 2014.
+
 'use strict';
 /*global game*/
+/*jslint browser:true*/
 
 var w4 = w4 || {};
 
@@ -13,7 +17,7 @@ scene.mainScene = function (lnum) {
         dtTot = 0,
         tutorialFinished = w4.tutorial.hasTutorial(lnum) ? false : true,
         tutorial = new w4.tutorial.tutorialScene(lnum),
-        i;
+        i; // note i is used as a counter inside other functions as well
 
     this.next = this;
     this.lnum = lnum;
@@ -27,8 +31,7 @@ scene.mainScene = function (lnum) {
     }
 
     this.update = function (dt) {
-        var i,
-            wWidth = w4.constants.worldWidth,
+        var wWidth = w4.constants.worldWidth,
             wHeight = w4.constants.worldHeight,
             player = w4.player.player,
             prevWorldIn = player.worldIn,
@@ -66,7 +69,6 @@ scene.mainScene = function (lnum) {
             wi = worlds[worldIn];
             locx = player.globalRect.x - wi.x0;
             locy = player.globalRect.y - wi.y0;
-//            console.log(worldIn, prevWorldIn, player.globalRect.x, player.globalRect.y, locx, locy);
 
             player.worldIn = worldIn;
             player.setAngle(worlds[worldIn]);
@@ -110,19 +112,18 @@ scene.mainScene = function (lnum) {
         return dt;
     };
 
-    this.isComplete = function(player) {
+    this.isComplete = function (player) {
         return w4.rect.overlapAABB(player.globalRect, w4.level.doorSprite.hitBox);
-    }
+    };
 
     this.assignToWorld = function (player) {
         var pos = player.getCenter(), // global co-ords
             worldIn,
             gWidth = w4.constants.globWidth,
             gHeight = w4.constants.globHeight,
-            inRect = w4.rect.inAABB,
-            i;
+            inRect = w4.rect.inAABB;
 
-        /* apply periodic boundary conditions */
+        // apply periodic boundary conditions
         if (pos[0] < 0) {
             pos[0] = pos[0] + gWidth;
         } else if (pos[0] > gWidth) {
@@ -155,8 +156,7 @@ scene.mainScene = function (lnum) {
     };
 
     this.draw = function () {
-        var i,
-            wor;
+        var wor;
 
         for (i = 0; i < nWorlds; i += 1) {
             wor = worlds[i];
@@ -172,7 +172,7 @@ scene.mainScene = function (lnum) {
         ctx.fillText("deaths: " + w4.level.nDeath, 30, 50);
 
         // and the level number
-        ctx.fillText("level " + this.lnum.toString() + " / " + 
+        ctx.fillText("level " + this.lnum.toString() + " / " +
                      w4.constants.numLevels.toString(), 30, 65);
 
         // draw the door sprite
@@ -214,7 +214,7 @@ scene.titleScene = function () {
     function drawCenteredText(txt, ypos) {
         ctx.fillText(txt, width / 2 - ctx.measureText(txt).width / 2, ypos);
     }
-        
+
     this.draw = function () {
         ctx.fillStyle = "#9CA0FF";
         ctx.fillRect(0, 0, width, height);
@@ -265,7 +265,7 @@ scene.gameCompleteScene = function () {
     function drawCenteredText(txt, ypos) {
         ctx.fillText(txt, width / 2 - ctx.measureText(txt).width / 2, ypos);
     }
-        
+
     this.draw = function () {
         ctx.fillStyle = "#9CA0FF";
         ctx.fillRect(0, 0, width, height);
@@ -303,7 +303,7 @@ scene.levelCompleteScene = function (mScene) {
     this.angle = 0;
 
     w4.jukebox.playSfx('complete');
-    
+
     // copy the old canvas to the new canvas
     newCanvas.width = oldCanvas.width;
     newCanvas.height = oldCanvas.height;
@@ -311,7 +311,6 @@ scene.levelCompleteScene = function (mScene) {
     newctx.drawImage(oldCanvas, 0, 0);
 
     // next scene
-//    console.log(this.nextlev, w4.constants.numLevels);
     if (this.nextlev > w4.constants.numLevels) {
         this.nextScene = new scene.gameCompleteScene();
         // immediately change scene
@@ -333,7 +332,7 @@ scene.levelCompleteScene = function (mScene) {
     };
 
     // some random and entertaining (?) thing I can create in 10 mins ;)
-    this.draw = function ( ) {
+    this.draw = function () {
         this.nextScene.draw();
         ctx.save();
         ctx.rotate(this.angle);

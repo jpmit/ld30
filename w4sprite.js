@@ -1,3 +1,6 @@
+// w4sprite.js
+// Copyright (c) James Mithen 2014.
+
 'use strict';
 /*global game*/
 /*global Image*/
@@ -37,7 +40,6 @@ sprite.Sprite = function (impath, x, y, xoff, yoff) {
     };
 
     this.draw = function (ctx) {
-//        console.log(this.rect.x, this.rect.y);
         ctx.save();
         if (this.img) {
             if (this.angle) {
@@ -95,7 +97,7 @@ sprite.PhysicsSprite = function (impath) {
     this.jump = null;
 
     // we pass the global position here
-    this.setPosition = function(x, y) {
+    this.setPosition = function (x, y) {
         var wor = w4.world.worlds[this.worldIn],
             xWorld = x - wor.x0,
             yWorld = y - wor.y0;
@@ -129,7 +131,7 @@ sprite.PhysicsSprite = function (impath) {
         var xnew,
             ynew;
 
-        /* set state based on any pressed keys */
+        // set state based on any pressed keys
         if (game.key.pressed[game.key.keys.LEFT]) {
             if (world.gravity > 0) {
                 this.left = true;
@@ -178,11 +180,9 @@ sprite.PhysicsSprite = function (impath) {
             xnew = w4.physics.crazyWorldStepX(this, world, dt);
             w4.physics.crazyWorldCollideX(this, world, xnew);
         }
-        // check if we 
-//        console.log(this.onfloor, this.jumping);
     };
 
-    /* return co-ords of bottom right corner in global co-ords */
+    // return co-ords of bottom right corner in global co-ords
     this.getBottomRight = function () {
         return [this.globalRect.x + this.rect.width, this.globalRect.y + this.rect.height];
     };
