@@ -11,7 +11,7 @@ var tutorial = game.namespace('tutorial', w4);
 
 tutorial.tutData = {
     "1": [["Welcome W"],
-          ["Use the arrow keys to move", "and space to jump"],
+          ["Use the left and right arrow keys to move", "and space to jump"],
           ["You'll have to get to the door", "if you ever want to escape", "these connected worlds"],
           ["That's the box with the red border over on the right"],
           ["And about the only thing around here I'm afraid"],
